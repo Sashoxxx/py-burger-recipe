@@ -1,14 +1,17 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from symtable import Class
 from typing import Union
 
 
 class Validator(ABC):
-    def __set_name__(self, owner: Class, name: str) -> None:
+    def __set_name__(self, owner: type[BurgerRecipe], name: str) -> None:
         self.protected_name = "_" + name
 
-    def __get__(self, instance: object, owner: Class) -> Union[int, None]:
+    def __get__(
+            self,
+            instance: object,
+            owner: type[BurgerRecipe]
+    ) -> Union[int, None]:
         if instance is None:
             return None
         return getattr(instance, self.protected_name)
@@ -42,7 +45,7 @@ class OneOf(Validator):
     def __init__(self, options: tuple) -> None:
         self.options = options
 
-    def validate(self, value: int) -> bool:
+    def validate(self, value: str) -> bool:
         if value not in self.options:
             raise ValueError(f"Expected {value} to be one of {self.options}.")
         return True
